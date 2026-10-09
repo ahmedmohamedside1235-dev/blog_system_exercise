@@ -1,0 +1,22 @@
+------------------------- Pages -------------------------
+    * Home Page [Show all non-deleted posts]
+    * Dashboard Page [Show all posts with trashed posts, and all operations [
+        create,
+        update,
+        delete,
+        force-delete,
+        restore
+        ] on them]
+    * Add Post Page [Form with fields : title, body, author_name]
+    * Edit Post Page [Form with fields : title, body, author_name]
+
+------------------------- Database -------------------------
+    @ Posts                                                 Done
+        => id
+        => title [string]
+        => body [text]
+        => author_name [string]
+        => created_at
+        => updated_at
+        => deleted_at
+
