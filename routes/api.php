@@ -8,11 +8,13 @@ Route::post('post/getAll', [BlogController::class, 'getAll']);
 Route::prefix('post')->controller(BlogController::class)->group(function () {
     Route::post('/create', 'store');
 
-    Route::match(['put', 'patch'], '/update/{id}', 'update');
+    Route::post('/update', 'update');
 
-    Route::delete('/delete/{id}', 'destroy');
+    Route::delete('/delete', 'destroy');
 
-    Route::delete('/force_delete/{id}', 'force_delete');
+    Route::delete('/force_delete', 'force_delete');
 
-    Route::post('/restore/{id}', 'restore');
+    Route::post('/restore', 'restore');
+
+    Route::post('/getPost', 'getPost');
 });

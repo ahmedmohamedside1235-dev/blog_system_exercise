@@ -1,7 +1,105 @@
 @import "node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import 'node_modules/@fortawesome/fontawesome-free/css/all.min.css';
+@import './shared/mixins';
+@import './post/post.scss';
 
 
-body {
-    background-color: #09c;
+nav.navbar {
+    padding-block: 20px;
+    box-shadow: 3px 6px 20px 0px #4F46E5;
+
+    .navbar-toggler {
+        border: 2px solid #4F46E5;
+        box-shadow: none;
+    }
+
+    .navbar-brand {
+        position: relative;
+        margin-left: 10px;
+        color: #0F172A;
+
+        span {
+            display: block;
+            background-color: #4F46E5;
+            width: 20px;
+            height: 20px;
+            border-radius: 100%;
+        }
+    }
+
+    .navbar-nav {
+        @include responsive(350) {
+            @include flex(center, center);
+            padding-block: 30px;
+        }
+
+        @include responsive(1050) {
+            @include flex(initial, initial);
+            padding-block: 0;
+        }
+
+        .nav-item {
+            .nav-link {
+                color: #000;
+                font-weight: 600;
+                font-size: 18px;
+
+                @include responsive(350) {
+                    padding-inline: 14px;
+                }
+
+                &.active {
+                    background-color: #c3d1fd;
+                    color: #4F46E5;
+                    border-radius: 8px;
+                }
+            }
+        }
+    }
+}
+
+form {
+    border: 1px solid #b3afff;
+    border-radius: 10px;
+    padding: 20px;
+
+    h3 {
+        padding-bottom: 20px;
+        border-bottom: 1px solid #b3afff;
+
+        i {
+            color: #4F46E5;
+        }
+    }
+
+    button.btn {
+        background-color: #4F46E5;
+        color: #fff;
+        font-weight: 600;
+
+        &:hover {
+            background-color: #4F46E5;
+            color: #fff;
+        }
+    }
+
+    input.form-control,
+    textarea.form-control {
+        border: 2px solid #4F46E5;
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+}
+
+a.add_anchor {
+    background-color: #4F46E5;
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+        background-color: #4F46E5;
+        color: #fff;
+    }
 }

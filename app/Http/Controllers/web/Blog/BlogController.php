@@ -21,7 +21,7 @@ class BlogController extends Controller
 
     public function index()
     {
-        $posts = Blog::withTrashed()->get();
+        $posts = Blog::withTrashed()->latest()->get();
         return view('pages.dashboard.dashboard', compact('posts'));
     }
 

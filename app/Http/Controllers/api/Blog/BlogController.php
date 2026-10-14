@@ -5,60 +5,87 @@ namespace App\Http\Controllers\api\Blog;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
     private function findPost(string $id)
     {
-        $post = Blog::withTrashed()->find($id);
-        if (!$post) return false;
-        return $post;
+        return Blog::withTrashed()->find($id);
     }
 
-    public function getAll()
+    public function getAll(Request $request)
     {
-        return response()->json(Blog::withTrashed()->get());
+        $request->validate(['trashed' => 'sometimes|boolean']);
+
+        $query = $request->boolean('trashed') ? Blog::withTrashed() : Blog::query();
+
+        return response()->json($query->latest()->get());
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'body' => 'required',
-            'author_name' => 'required',
+            'title' => 'required|string|min:3|max:255',
+            'body' => 'required|string|min:10',
+            'author_name' => 'required|min:3|max:100',
         ]);
 
-        Blog::create($request->all());
-        return response()->json(['message' =>  'The Post has been added successfully.']);
+        $post = Blog::create($request->all());
+        return response()->json([
+            'message' =>  'The Post has been added successfully.',
+            'post' => $post
+        ]);
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        $post = $this->findPost($id);
+        $request->validate([
+            'id' => 'required|uuid|string|exists:blog,id',
+        ]);
+
+        $post = $this->findPost($request->id);
 
         if (!$post) {
             return response()->json(['messeage' => 'The id is not found'], 422);
         }
 
+
         $post->delete();
-        return response()->json(['message' =>  'The Post has been deleted successfully.']);
+
+        return response()->json([
+            'message' =>  'The Post has been deleted successfully.',
+            'post' => $post->fresh() ?? Blog::withTrashed()->find($request->id)
+        ]);
     }
 
-    public function restore(string $id)
+    public function restore(Request $request)
     {
-        $post = $this->findPost($id);
+        $request->validate([
+            'id' => 'required|uuid|string|exists:blog,id',
+        ]);
+
+        $post = $this->findPost($request->id);
 
         if (!$post) {
             return response()->json(['messeage' => 'The id is not found'], 422);
         }
 
         $post->restore();
-        return response()->json(['message' =>  'The Post has been restore successfully.']);
+
+        return response()->json([
+            'message' =>  'The Post has been restored successfully.',
+            'post' => $post->fresh()
+        ]);
     }
 
-    public function force_delete(string $id)
+    public function force_delete(Request $request)
     {
-        $post = $this->findPost($id);
+        $request->validate([
+            'id' => 'required|uuid|string|exists:blog,id',
+        ]);
+
+        $post = $this->findPost($request->id);
 
         if (!$post) {
             return response()->json(['messeage' => 'The id is not found'], 422);
@@ -68,15 +95,16 @@ class BlogController extends Controller
         return response()->json(['message' =>  'The Post has been force delete successfully.']);
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'body' => 'required',
-            'author_name' => 'required',
+        $data = $request->validate([
+            'id' => 'required|uuid|string|exists:blog,id',
+            'title' => 'required|string|min:3|max:255',
+            'body' => 'required|string|min:10',
+            'author_name' => 'required|min:3|max:100',
         ]);
 
-        $post = $this->findPost($id);
+        $post = $this->findPost($data['id']);
 
         if (!$post) {
             return response()->json(['messeage' => 'The id is not found'], 422);
@@ -86,6 +114,25 @@ class BlogController extends Controller
         $post->body = $request->body;
         $post->author_name = $request->author_name;
         $post->save();
-        return response()->json(['message' =>  'The Post has been updated successfully.']);
+
+        return response()->json([
+            'message' =>  'The Post has been updated successfully.',
+            'post' => $post->fresh()
+        ]);
+    }
+
+    public function getPost(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|uuid|string|exists:blog,id'
+        ]);
+
+        $post = $this->findPost($request->id);
+
+        if (!$post) {
+            return response()->json(['messeage' => 'The id is not found'], 422);
+        }
+
+        return response()->json($post);
     }
 }

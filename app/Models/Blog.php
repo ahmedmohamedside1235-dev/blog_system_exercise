@@ -16,14 +16,14 @@ class Blog extends Model
     protected function createdAt(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? Carbon::parse($value)->format('F j, Y, g:i a') : null,
+            get: fn($value) => $value ? Carbon::parse($value)->format('F j, Y') : null,
         );
     }
 
     protected function deletedAt(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? Carbon::parse($value)->format('F j, Y, g:i a') : null,
+            get: fn($value) => $value ? Carbon::parse($value)->format('F j, Y') : null,
         );
     }
 }
