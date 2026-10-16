@@ -5,7 +5,6 @@ namespace App\Http\Controllers\api\Blog;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
@@ -20,16 +19,24 @@ class BlogController extends Controller
 
         $query = $request->boolean('trashed') ? Blog::withTrashed() : Blog::query();
 
-        return response()->json($query->latest()->get());
+        return response()->json($query->latest()->paginate(10, ['*'], 'page', $request->input('page')));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|min:3|max:255',
-            'body' => 'required|string|min:10',
-            'author_name' => 'required|min:3|max:100',
-        ]);
+        $request->validate(
+            [
+                'title' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,})*$/',
+                'body' => 'required|regex:/^[A-Za-z0-9\s.,!?\'"():;-]+$/|min:10',
+                'author_name' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,}){0,2}$/',
+            ],
+
+            [
+                'title.regex' => 'Each word must be at least 3 letters long',
+                'body.regex' => 'The Body can contain only English letters, numbers and at least 10 characters',
+                'author_name.regex' => 'Each word must be at least 3 letters long (up to 3 words)',
+            ]
+        );
 
         $post = Blog::create($request->all());
         return response()->json([
@@ -97,12 +104,20 @@ class BlogController extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->validate([
-            'id' => 'required|uuid|string|exists:blog,id',
-            'title' => 'required|string|min:3|max:255',
-            'body' => 'required|string|min:10',
-            'author_name' => 'required|min:3|max:100',
-        ]);
+        $data = $request->validate(
+            [
+                'id' => 'required|uuid|string|exists:blog,id',
+                'title' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,})*$/',
+                'body' => 'required|regex:/^[A-Za-z0-9\s.,!?\'"():;-]+$/|min:10',
+                'author_name' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,}){0,2}$/',
+            ],
+
+            [
+                'title.regex' => 'Each word must be at least 3 letters long',
+                'body.regex' => 'The Body can contain only English letters, numbers and at least 10 characters',
+                'author_name.regex' => 'Each word must be at least 3 letters long (up to 3 words)',
+            ]
+        );
 
         $post = $this->findPost($data['id']);
 

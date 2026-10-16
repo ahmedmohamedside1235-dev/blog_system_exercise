@@ -18,9 +18,17 @@
             <p class="alert text-center alert-success w-100 mb-5 success-message">{{ $value }}</p>
         @endsession
 
-        @foreach ($posts as $post)
+        @forelse ($data as $post)
             <x-blog :$post :isDashboard="true"></x-blog>
-        @endforeach
+        @empty
+            <p class="alert alert-success w-100 text-center">No posts founded</p>
+        @endforelse
+
+        <div class="my-5">
+            @if ($data->lastPage() > 1)
+                {{ $data->links() }}
+            @endif
+        </div>
 
     </div>
 @endsection

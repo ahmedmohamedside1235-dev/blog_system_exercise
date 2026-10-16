@@ -21,8 +21,8 @@ class BlogController extends Controller
 
     public function index()
     {
-        $posts = Blog::withTrashed()->latest()->get();
-        return view('pages.dashboard.dashboard', compact('posts'));
+        $data = Blog::withTrashed()->latest()->paginate(10);
+        return view('pages.dashboard.dashboard', compact('data'));
     }
 
     public function create()
@@ -32,11 +32,19 @@ class BlogController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'body' => 'required',
-            'author_name' => 'required',
-        ]);
+        $request->validate(
+            [
+                'title' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,})*$/',
+                'body' => 'required|regex:/^[A-Za-z0-9\s.,!?\'"():;-]+$/|min:10',
+                'author_name' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,}){0,2}$/',
+            ],
+
+            [
+                'title.regex' => 'Each word must be at least 3 letters long',
+                'body.regex' => 'The Body can contain only English letters, numbers and at least 10 characters',
+                'author_name.regex' => 'Each word must be at least 3 letters long (up to 3 words)',
+            ]
+        );
 
         Blog::create($request->all());
         return redirect()->route('dashboard.index')->with('success', 'The Post has been added successfully.');
@@ -71,11 +79,19 @@ class BlogController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'title' => 'required',
-            'body' => 'required',
-            'author_name' => 'required',
-        ]);
+        $request->validate(
+            [
+                'title' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,})*$/',
+                'body' => 'required|regex:/^[A-Za-z0-9\s.,!?\'"():;-]+$/|min:10',
+                'author_name' => 'required|regex:/^[a-zA-Z]{3,}(\s+[a-zA-Z]{3,}){0,2}$/',
+            ],
+
+            [
+                'title.regex' => 'Each word must be at least 3 letters long',
+                'body.regex' => 'The Body can contain only English letters, numbers and at least 10 characters',
+                'author_name.regex' => 'Each word must be at least 3 letters long (up to 3 words)',
+            ]
+        );
 
         $post = $this->findPost($id);
 

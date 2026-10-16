@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $posts = Blog::latest()->get();
-        return view('pages.home.index', compact('posts'));
+        $data = Blog::latest()->paginate(10);
+        return view('pages.home.index', compact('data'));
     }
 }
