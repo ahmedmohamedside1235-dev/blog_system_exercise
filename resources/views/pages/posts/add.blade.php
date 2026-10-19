@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="container my-5">
-        <form action="{{ route('dashboard.store') }}" method="POST" class="w-50 m-auto mt-5">
+        <form action="{{ route('dashboard.store') }}" method="POST" class="m-auto mt-5">
             @csrf
             <h3 class="text-center mb-4"><i class="fa-solid fa-folder-plus"></i> Add New Post</h3>
             <div class="mb-3">

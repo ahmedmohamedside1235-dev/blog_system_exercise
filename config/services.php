@@ -35,4 +35,6 @@ return [
         ],
     ],
 
+    'proxy_secret' => env('PROXY_SECRET'),
+
 ];

@@ -1,7 +1,7 @@
-@import "bootstrap/dist/css/bootstrap.min.css";
-@import "@fortawesome/fontawesome-free/css/all.min.css";
-@import './shared/mixins';
-@import './post/post.scss';
+@use "bootstrap/dist/css/bootstrap.min.css";
+@use "@fortawesome/fontawesome-free/css/all.min.css";
+@use './shared/mixins' as *;
+@use './post/post.scss';
 
 
 nav.navbar {
@@ -62,6 +62,18 @@ form {
     border: 1px solid #b3afff;
     border-radius: 10px;
     padding: 20px;
+
+    @include responsive(350) {
+        width: 300px;
+    }
+
+    @include responsive(450) {
+        width: 350px;
+    }
+
+    @include responsive(650) {
+        width: 500px;
+    }
 
     h3 {
         padding-bottom: 20px;
